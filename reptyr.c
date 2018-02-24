@@ -272,8 +272,8 @@ int main(int argc, char **argv) {
             return 1;
         }
     } else {
-        printf("Opened a new pty: %s\n", ptsname(pty));
-        fflush(stdout);
+        /* printf("Opened a new pty: %s\n", ptsname(pty)); */
+        /* fflush(stdout); */
         if (argc > 2) {
             if (!fork()) {
                 setenv("REPTYR_PTY", ptsname(pty), 1);
@@ -297,7 +297,10 @@ int main(int argc, char **argv) {
     }
 
     setup_raw(&saved_termios);
-    do_proxy(pty);
+    while (1) {
+        do_proxy(pty);
+        usleep(100);
+    }
     do {
         errno = 0;
         if (tcsetattr(0, TCSANOW, &saved_termios) && errno != EINTR)
